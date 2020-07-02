@@ -1,0 +1,91 @@
+import System;
+
+module Program
+{
+    // methods in external libraries can be statically linked to via the "extern" keyword
+    extern void NativeLibFunction(param : MyStruct*);
+
+    export struct MyStruct
+    {
+        var myField : int;
+    }
+
+    // implement blocks can add methods to a struct, or implement constructors/destructors
+    implement MyStruct
+    {
+        function this( value : int )
+        {
+            myField = value;
+        }
+
+        function ~this()
+        {
+        }
+    }
+
+    // structs can inherit from other structs. they are able to be implicitly cast to their parent type.
+    // structs implicitly inherit methods from their parents, unless they define a method of the same name ("hiding")
+    // the base method can still always be called by referring to the special "base" keyword (which is an instance of the base type)
+    struct MyStruct2 : MyStruct
+    {
+        var myField2 : float;
+    }
+
+    // implement blocks can also be used to implement interfaces
+    // in fact, you don't actually need to implement all of the interface functions in the same block.
+    // if the struct already has those methods defined elsewhere, you can just use an empty implement block to retroactively make a struct implement an interface.
+    // this works even if the struct is defined in another module you're importing
+    export interface IMyInterface
+    {
+        function MyInterfaceFunction();
+    }
+
+    implement MyStruct2 : IMyInterface
+    {
+        function this(value : int, value2 : float)
+            : base(value)
+        {
+            myField2 = value2;
+        }
+
+        function MyInterfaceFunction()
+        {
+            print("Hello, world!");
+        }
+    }
+
+    function testFunc(ref arg : MyStruct)
+    {
+    }
+
+    // export marks things as being visible outside of this module
+    export function main()
+    {
+        var test : MyStruct = MyStruct( 100 );
+        var test2 : &MyStruct2 = new MyStruct2( 50, 0.5f );
+
+        var test3 : IMyInterface = clone test2; // note that IMyInterface is always a ref type, and expects a reference to be assigned.
+        // however, if you want to assign a non-reference type to it, you can use "clone" to clone that type onto the heap and get a reference to it.
+
+        // note that any reference can automatically be cloned too.
+        // this allocates a new instance of the object, by default as a byte-for-byte "shallow" clone of the original
+        // although any struct can also override the "clone" operator to do any custom cloning (like implementing a deep clone)
+        var test4 : &MyStruct2 = clone test2;
+
+        // additionally, any reference can also be completely re-initialized after construction using the "init" keyword
+        // this forcibly zeroes out the memory before re-calling the constructor method again
+        // it's designed to make bug-free object pools much easier to implement
+        init test2( 100, 0.35f );
+
+        // ref can be used to pass temporary references to local variables as arguments to functions
+        testFunc( ref test );
+
+        // technically, you can also grab raw pointers to local variables...
+        // but you need an "unsafe" block to do so.
+        // this is useful for external library interop however.
+        unsafe
+        {
+            var testPtr : MyStruct* = &test;
+        }
+    }
+}
