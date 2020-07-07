@@ -25,6 +25,16 @@ namespace Compiler
             }
         }
 
+        public override bool IsConst(Module module)
+        {
+            return true;
+        }
+        
+        public override object VisitConst(Module module)
+        {
+            return Value;
+        }
+
         public override string ToString()
         {
             return Value.ToString();

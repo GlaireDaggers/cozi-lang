@@ -85,6 +85,16 @@ namespace Compiler
             Value = builder.ToString();
         }
 
+        public override bool IsConst(Module module)
+        {
+            return true;
+        }
+
+        public override object VisitConst(Module module)
+        {
+            return Value;
+        }
+
         public override string ToString()
         {
             return Source.Value.ToString();
