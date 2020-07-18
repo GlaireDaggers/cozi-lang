@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using Cozi.IL;
 
-namespace Compiler
+namespace Cozi.Compiler
 {
     public class Module
     {
+        public ILModule ILModule;
         public readonly CompileContext Context;
         public readonly string Name;
 
@@ -22,8 +24,8 @@ namespace Compiler
 
         public void AddPage(ModulePage page)
         {
-            Pages.Add(page);
             page.Module = this;
+            Pages.Add(page);
 
             // store a list of declared consts
             // we don't actually initialize them yet, instead they're lazy initialized as we visit expressions that reference them
@@ -35,7 +37,7 @@ namespace Compiler
 
         public bool HasConst(string constName)
         {
-            return declaredConsts.ContainsKey(constName);
+            return declaredConsts.ContainsKey(constName) || Constants.ContainsKey(constName);
         }
 
         public bool TryGetConst(string constName, out object val)
@@ -68,10 +70,19 @@ namespace Compiler
                 if( expr.IsConst(this) )
                 {
                     var val = expr.VisitConst(this);
+                    if( val == null )
+                    {
+                        Context.Errors.Add(new CompileError(expr.Source, "Invalid const expression"));
+                    }
+
                     Constants.Add(constName, val);
 
                     constStack.Pop();
                     return val;
+                }
+                else
+                {
+                    Context.Errors.Add(new CompileError(expr.Source, "Invalid const expression"));
                 }
 
                 constStack.Pop();

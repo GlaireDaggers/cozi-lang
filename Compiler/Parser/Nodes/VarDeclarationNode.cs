@@ -1,4 +1,4 @@
-namespace Compiler
+namespace Cozi.Compiler
 {
     public class VarDeclarationNode : ASTNode
     {
@@ -16,6 +16,19 @@ namespace Compiler
         public override string ToString()
         {
             return Assignment == null ? $"var {Identifier} : {Type}" : $"var {Identifier} : {Type} = {Assignment}";
+        }
+
+        public override void Emit(ILGeneratorContext context)
+        {
+            var localType = context.Context.GetType(Type, context.Page);
+            int localId = context.Function.EmitLocal(Identifier.Source.Value.ToString(), localType);
+
+            if(Assignment != null)
+            {
+                var storeType = Assignment.EmitLoad(context);
+                TypeUtility.ImplicitCast(context, storeType, localType, Assignment.Source);
+                context.Function.Current.EmitStLoc(localId);
+            }
         }
     }
 }

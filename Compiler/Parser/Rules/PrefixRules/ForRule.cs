@@ -1,4 +1,4 @@
-namespace Compiler
+namespace Cozi.Compiler
 {
     public class ForRule : IPrefixRule
     {
@@ -6,30 +6,14 @@ namespace Compiler
         {
             context.Expect(TokenType.OpenParenthesis);
 
-            ASTNode initializer = null;
-            ASTNode condition = null;
-            ASTNode iterator = null;
-
-            if( !context.TryMatch(TokenType.Semicolon) )
-            {
-                initializer = context.ParseExpression();
-                context.Expect(TokenType.Semicolon);
-            }
-
-            if( !context.TryMatch(TokenType.Semicolon) )
-            {
-                condition = context.ParseExpression();
-                context.Expect(TokenType.Semicolon);
-            }
-
-            if( !context.TryMatch(TokenType.CloseParenthesis) )
-            {
-                iterator = context.ParseExpression();
-                context.Expect(TokenType.CloseParenthesis);
-            }
+            IdentifierNode identifier = new IdentifierNode(context.Expect(TokenType.Identifier));
+            context.Expect(TokenType.In);
+            ASTNode rangeExpr = context.ParseExpression();
+            
+            context.Expect(TokenType.CloseParenthesis);
 
             ASTNode body = context.ParseStatement();
-            return new ForNode(sourceToken, initializer, condition, iterator, body);
+            return new ForNode(sourceToken, identifier, rangeExpr, body);
         }
     }
 }

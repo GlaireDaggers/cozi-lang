@@ -1,8 +1,8 @@
 using System;
 
-namespace Compiler
+namespace Cozi.Compiler
 {
-    using Compiler.Utils;
+    using Cozi.Compiler.Utils;
 
     /// <summary>
     /// Represents a token's classification
@@ -44,6 +44,7 @@ namespace Compiler
         If,
         Else,
         For,
+        In,
         While,
         Do,
         Continue,
@@ -60,6 +61,8 @@ namespace Compiler
         OpenBracket,
         CloseBracket,
         Comma,
+
+        Range,
 
         Equals,
         PlusEquals,

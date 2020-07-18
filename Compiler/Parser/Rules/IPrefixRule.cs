@@ -1,4 +1,4 @@
-namespace Compiler
+namespace Cozi.Compiler
 {
     /// <summary>
     /// Rule for expressions which begin with a prefix token

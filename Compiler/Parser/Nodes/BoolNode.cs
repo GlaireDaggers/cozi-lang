@@ -1,4 +1,6 @@
-namespace Compiler
+using Cozi.IL;
+
+namespace Cozi.Compiler
 {
     public class BoolNode : ASTNode
     {
@@ -20,6 +22,17 @@ namespace Compiler
         public override object VisitConst(Module module)
         {
             return Value;
+        }
+
+        public override TypeInfo EmitLoad(ILGeneratorContext context)
+        {
+            context.Function.Current.EmitLdConstB(Value);
+            return context.Context.GlobalTypes.GetType("bool");
+        }
+
+        public override TypeInfo GetLoadType(ILGeneratorContext context)
+        {
+            return context.Context.GlobalTypes.GetType("bool");
         }
 
         public override string ToString()

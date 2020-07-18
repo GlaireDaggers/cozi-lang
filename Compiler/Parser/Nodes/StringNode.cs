@@ -1,7 +1,8 @@
 using System;
 using System.Text;
+using Cozi.IL;
 
-namespace Compiler
+namespace Cozi.Compiler
 {
     public class StringNode : ASTNode
     {
@@ -93,6 +94,17 @@ namespace Compiler
         public override object VisitConst(Module module)
         {
             return Value;
+        }
+
+        public override TypeInfo EmitLoad(ILGeneratorContext context)
+        {
+            context.Function.Current.EmitLdStr(Value);
+            return context.Context.GlobalTypes.GetType("string");
+        }
+
+        public override TypeInfo GetLoadType(ILGeneratorContext context)
+        {
+            return context.Context.GlobalTypes.GetType("string");
         }
 
         public override string ToString()

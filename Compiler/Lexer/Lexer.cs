@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 
-namespace Compiler
+namespace Cozi.Compiler
 {
-    using Compiler.Utils;
+    using Cozi.Compiler.Utils;
 
     /// <summary>
     /// Responsible for taking a source document and transforming it into a linear series of tokens
@@ -201,6 +201,7 @@ namespace Compiler
             AddRule(TokenType.If, @"if");
             AddRule(TokenType.Else, @"else");
             AddRule(TokenType.For, @"for");
+            AddRule(TokenType.In, @"in");
             AddRule(TokenType.While, @"while");
             AddRule(TokenType.Do, @"do");
             AddRule(TokenType.Continue, @"continue");
@@ -217,6 +218,8 @@ namespace Compiler
             AddRule(TokenType.OpenAngleBracket, @"<");
             AddRule(TokenType.CloseAngleBracket, @">");
             AddRule(TokenType.Comma, @",");
+
+            AddRule(TokenType.Range, @"\.\.");
 
             AddRule(TokenType.Equals, @"=");
 

@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-namespace Compiler
+namespace Cozi.Compiler
 {
     public struct ParseResult
     {
@@ -175,6 +175,7 @@ namespace Compiler
 
             // prefix rules
             AddRule<IdentifierNode>(TokenType.Identifier, (t) => { return new IdentifierNode(t); });
+            AddRule<ThisNode>(TokenType.This, (t) => { return new ThisNode(t); });
             AddRule<IntegerNode>(TokenType.Integer, (t) => { return new IntegerNode(t); });
             AddRule<IntegerNode>(TokenType.OctInteger, (t) => { return new IntegerNode(t); });
             AddRule<IntegerNode>(TokenType.HexInteger, (t) => { return new IntegerNode(t); });
@@ -261,6 +262,8 @@ namespace Compiler
 
             AddRule(TokenType.Dot, new DotAccessRule());
             AddRule(TokenType.OpenBracket, new IndexRule());
+
+            AddRule(TokenType.Range, new RangeRule());
 
             // postfix rules
             AddRule(TokenType.Increment, new PostfixOperatorRule(OperatorPrecedence.Postfix));

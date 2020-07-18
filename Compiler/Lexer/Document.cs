@@ -1,6 +1,6 @@
 using System;
 
-namespace Compiler
+namespace Cozi.Compiler
 {
     /// <summary>
     /// Represents a document which can be fed to a lexer and produces tokens

@@ -1,4 +1,4 @@
-namespace Compiler
+namespace Cozi.Compiler
 {
     public class AssignmentNode : ASTNode
     {
@@ -14,6 +14,12 @@ namespace Compiler
         public override string ToString()
         {
             return $"{LHS} = {RHS}";
+        }
+
+        public override void Emit(ILGeneratorContext context)
+        {
+            var exprType = RHS.EmitLoad(context);
+            LHS.EmitStore(context, exprType);
         }
     }
 }

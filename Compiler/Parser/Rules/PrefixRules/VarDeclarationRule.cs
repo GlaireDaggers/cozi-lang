@@ -1,4 +1,4 @@
-namespace Compiler
+namespace Cozi.Compiler
 {
     public class VarDeclarationRule : IPrefixRule
     {

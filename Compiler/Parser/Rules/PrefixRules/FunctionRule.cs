@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Compiler
+namespace Cozi.Compiler
 {
     public class FunctionRule : IPrefixRule
     {
@@ -12,9 +12,14 @@ namespace Compiler
 
             List<FunctionParameterNode> parameters = new List<FunctionParameterNode>();
 
-            while(!context.TryMatch(TokenType.CloseParenthesis))
+            if(!context.TryMatch(TokenType.CloseParenthesis))
             {
-                parameters.Add(FunctionParameterNode.Parse(context));
+                do
+                {
+                    parameters.Add(FunctionParameterNode.Parse(context));
+                } while(context.TryMatch(TokenType.Comma));
+
+                context.Expect(TokenType.CloseParenthesis);
             }
 
             // note: type is optional, but if omitted means "void" is assumed

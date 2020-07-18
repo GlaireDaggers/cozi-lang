@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -14,7 +15,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Compiler\Compiler.csproj" />
-    <ProjectReference Include="..\Compiler.LLVM\Compiler.LLVM.csproj" />
+    <ProjectReference Include="..\IL\IL.csproj" />
+    <ProjectReference Include="..\VM\VM.csproj" />
   </ItemGroup>
 
   <ItemGroup>

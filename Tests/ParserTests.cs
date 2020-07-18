@@ -2,7 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests
 {
-    using Compiler;
+    using Cozi.Compiler;
 
     [TestClass]
     public class ParserTests
@@ -242,7 +242,7 @@ else
         public void TestFor()
         {
             string parseTest = @"
-for(var i : int = 0; i <= 100; i++)
+for(i in 0 .. 100 - 1)
 {
     Console.WriteLine(""foo!"");
 }
@@ -255,9 +255,10 @@ for(var i : int = 0; i <= 100; i++)
             Assert.IsTrue(parseResults.Errors.Length == 0);
 
             Assert.IsTrue(parseResults.AST[0] is ForNode);
-            Assert.IsTrue((parseResults.AST[0] as ForNode).Initializer is VarDeclarationNode);
-            Assert.IsTrue((parseResults.AST[0] as ForNode).Condition is BinaryOpNode);
-            Assert.IsTrue((parseResults.AST[0] as ForNode).Iterator is PostfixOpNode);
+            Assert.IsTrue((parseResults.AST[0] as ForNode).Iterator.Source.Value == "i");
+            Assert.IsTrue((parseResults.AST[0] as ForNode).Range is RangeNode rangeExpr &&
+                rangeExpr.Min is IntegerNode &&
+                rangeExpr.Max is BinaryOpNode);
         }
 
         [TestMethod]

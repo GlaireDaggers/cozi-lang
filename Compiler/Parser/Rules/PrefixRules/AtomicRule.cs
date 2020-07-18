@@ -1,6 +1,6 @@
 using System;
 
-namespace Compiler
+namespace Cozi.Compiler
 {
     public class AtomicRule<T> : IPrefixRule
         where T : ASTNode

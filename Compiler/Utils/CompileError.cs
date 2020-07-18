@@ -1,6 +1,6 @@
-namespace Compiler
+namespace Cozi.Compiler
 {
-    using Compiler.Utils;
+    using Cozi.Compiler.Utils;
 
     public struct CompileError
     {

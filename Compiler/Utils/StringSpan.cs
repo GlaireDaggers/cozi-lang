@@ -1,7 +1,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace Compiler.Utils
+namespace Cozi.Compiler.Utils
 {
     public static class StringExtensions
     {

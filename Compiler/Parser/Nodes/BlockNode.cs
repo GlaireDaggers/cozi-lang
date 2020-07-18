@@ -1,6 +1,6 @@
 using System.Linq;
 
-namespace Compiler
+namespace Cozi.Compiler
 {
     public class BlockNode : ASTNode
     {
@@ -24,6 +24,14 @@ namespace Compiler
             str += "}";
             
             return str;
+        }
+
+        public override void Emit(ILGeneratorContext context)
+        {
+            foreach(var expr in Children)
+            {
+                expr.Emit(context);
+            }
         }
     }
 }

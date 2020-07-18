@@ -1,4 +1,6 @@
-namespace Compiler
+using System.IO;
+
+namespace Cozi.IL
 {
     public class ReferenceTypeInfo : TypeInfo
     {
@@ -8,6 +10,23 @@ namespace Compiler
             : base("&" + innerType.Name, TypeKind.Reference)
         {
             InnerType = innerType;
+        }
+
+        public ReferenceTypeInfo(string name, TypeKind kind, BinaryReader reader)
+            : base(name, kind, reader)
+        {
+            InnerType = TypeInfo.Deserialize(reader);
+        }
+
+        public override void Serialize(BinaryWriter outStream)
+        {
+            base.Serialize(outStream);
+            InnerType.Serialize(outStream);
+        }
+
+        public override int SizeOf()
+        {
+            return 8;
         }
 
         public override bool Equals(object obj)

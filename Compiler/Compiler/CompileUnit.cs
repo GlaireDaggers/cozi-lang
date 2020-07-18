@@ -2,29 +2,28 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
-namespace Compiler
+using Cozi.IL;
+
+namespace Cozi.Compiler
 {
-    public class CompileResult<T>
-        where T : ICodeGenerator
+    public class CompileResult
     {
         public CompileError[] Errors;
-        public Module[] Modules;
-        public T CodeGenerator;
+        public ILContext Output;
     }
 
-    public class CompileUnit<T>
-        where T : ICodeGenerator, new()
+    public class CompileUnit
     {
         private ParseResult[] parseUnits;
-        private T generator;
+        private ILGenerator generator;
 
         public CompileUnit(ParseResult[] parseUnits)
         {
             this.parseUnits = parseUnits;
-            this.generator = new T();
+            this.generator = new ILGenerator();
         }
 
-        public CompileResult<T> Compile()
+        public CompileResult Compile()
         {
             CompileContext context = new CompileContext();
 
@@ -75,14 +74,20 @@ namespace Compiler
             {
                 foreach(var m in moduleArray)
                 {
+                    generator.Add(m);
+                }
+
+                foreach(var m in moduleArray)
+                {
                     generator.Generate(m);
                 }
             }
 
-            return new CompileResult<T>() {
+            context.Errors.AddRange(generator.Errors);
+
+            return new CompileResult() {
                 Errors = context.Errors.ToArray(),
-                Modules = moduleArray,
-                CodeGenerator = generator
+                Output = generator.Context
             };
         }
     }

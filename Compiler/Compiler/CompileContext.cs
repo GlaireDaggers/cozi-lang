@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Compiler
+namespace Cozi.Compiler
 {
     public class CompileContext
     {

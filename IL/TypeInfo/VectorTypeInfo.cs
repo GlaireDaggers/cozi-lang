@@ -1,4 +1,6 @@
-namespace Compiler
+using System.IO;
+
+namespace Cozi.IL
 {
     public class VectorTypeInfo : TypeInfo
     {
@@ -10,6 +12,25 @@ namespace Compiler
         {
             InnerType = innerType;
             ElementCount = elementCount;
+        }
+
+        public VectorTypeInfo(string name, TypeKind kind, BinaryReader reader)
+            : base(name, kind, reader)
+        {
+            InnerType = TypeInfo.Deserialize(reader);
+            ElementCount = reader.ReadUInt32();
+        }
+
+        public override void Serialize(BinaryWriter outStream)
+        {
+            base.Serialize(outStream);
+            InnerType.Serialize(outStream);
+            outStream.Write(ElementCount);
+        }
+
+        public override int SizeOf()
+        {
+            return InnerType.SizeOf() * (int)ElementCount;
         }
 
         public override bool Equals(object obj)

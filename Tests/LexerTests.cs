@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Tests
 {
-    using Compiler;
+    using Cozi.Compiler;
 
     [TestClass]
     public class LexerTests

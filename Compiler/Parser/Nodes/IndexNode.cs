@@ -1,4 +1,6 @@
-namespace Compiler
+using Cozi.IL;
+
+namespace Cozi.Compiler
 {
     public class IndexNode : ASTNode
     {
@@ -55,6 +57,98 @@ namespace Compiler
             }
 
             return null;
+        }
+
+        public override TypeInfo GetLoadType(ILGeneratorContext context)
+        {
+            if(IsConst(context.Module))
+            {
+                return TypeUtility.GetConstType(VisitConst(context.Module), context.Context);
+            }
+
+            var srcType = LHS.EmitLoad(context);
+            if(srcType is DynamicArrayTypeInfo srcType_dynarray)
+            {
+                return srcType_dynarray.ElementType;
+            }
+            else if(srcType is StaticArrayTypeInfo srcType_staticarray)
+            {
+                return srcType_staticarray.ElementType;
+            }
+            else
+            {
+                context.Errors.Add(new CompileError(LHS.Source, $"Cannot index type {srcType.Name}"));
+                return null;
+            }
+        }
+
+        public override TypeInfo EmitLoad(ILGeneratorContext context)
+        {
+            if(IsConst(context.Module))
+            {
+                return context.Function.Current.EmitLdConst(VisitConst(context.Module), context.Context);
+            }
+
+            var srcType = LHS.GetLoadType(context);
+
+            if(srcType is DynamicArrayTypeInfo srcType_dynarray)
+            {
+                LHS.EmitLoad(context);
+
+                var indexType = IndexExpression.EmitLoad(context);
+                TypeUtility.ImplicitCast(context, indexType, context.Context.GlobalTypes.GetType("int"), IndexExpression.Source);
+
+                context.Function.Current.EmitLdElem(srcType_dynarray);
+
+                return srcType_dynarray.ElementType;
+            }
+            else if(srcType is StaticArrayTypeInfo srcType_staticarray)
+            {
+                LHS.EmitLoadAddress(context);
+
+                var indexType = IndexExpression.EmitLoad(context);
+                TypeUtility.ImplicitCast(context, indexType, context.Context.GlobalTypes.GetType("int"), IndexExpression.Source);
+
+                context.Function.Current.EmitLdElem(srcType_staticarray);
+
+                return srcType_staticarray.ElementType;
+            }
+            else
+            {
+                context.Errors.Add(new CompileError(LHS.Source, $"Cannot index type {srcType.Name}"));
+                return null;
+            }
+        }
+
+        public override void EmitStore(ILGeneratorContext context, TypeInfo type)
+        {
+            var srcType = LHS.GetLoadType(context);
+
+            if(srcType is DynamicArrayTypeInfo srcType_dynarray)
+            {
+                LHS.EmitLoad(context);
+
+                var indexType = IndexExpression.EmitLoad(context);
+                TypeUtility.ImplicitCast(context, indexType, context.Context.GlobalTypes.GetType("int"), IndexExpression.Source);
+
+                context.Function.Current.EmitStElem(srcType_dynarray);
+            }
+            else if(srcType is StaticArrayTypeInfo srcType_staticarray)
+            {
+                LHS.EmitLoadAddress(context);
+
+                var indexType = IndexExpression.EmitLoad(context);
+                TypeUtility.ImplicitCast(context, indexType, context.Context.GlobalTypes.GetType("int"), IndexExpression.Source);
+
+                context.Function.Current.EmitStElem(srcType_staticarray);
+            }
+            else
+            {
+                if(srcType == null)
+                    context.Errors.Add(new CompileError(LHS.Source, $"Cannot index expression {LHS}"));
+                else
+                    context.Errors.Add(new CompileError(LHS.Source, $"Cannot index type {srcType.Name}"));
+            }
         }
     }
 }

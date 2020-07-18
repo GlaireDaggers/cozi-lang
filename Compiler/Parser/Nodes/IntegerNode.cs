@@ -1,6 +1,7 @@
 using System;
+using Cozi.IL;
 
-namespace Compiler
+namespace Cozi.Compiler
 {
     public class IntegerNode : ASTNode
     {
@@ -33,6 +34,34 @@ namespace Compiler
         public override object VisitConst(Module module)
         {
             return Value;
+        }
+
+        public override TypeInfo EmitLoad(ILGeneratorContext context)
+        {
+            // integer literals are always treated as ints unless they are too large
+            if(Value >= int.MinValue && Value <= int.MaxValue)
+            {
+                context.Function.Current.EmitLdConstI((int)Value);
+                return context.Context.GlobalTypes.GetType("int");
+            }
+            else
+            {
+                context.Function.Current.EmitLdConstI(Value);
+                return context.Context.GlobalTypes.GetType("long");
+            }
+        }
+
+        public override TypeInfo GetLoadType(ILGeneratorContext context)
+        {
+            // integer literals are always treated as ints unless they are too large
+            if(Value >= int.MinValue && Value <= int.MaxValue)
+            {
+                return context.Context.GlobalTypes.GetType("int");
+            }
+            else
+            {
+                return context.Context.GlobalTypes.GetType("long");
+            }
         }
 
         public override string ToString()

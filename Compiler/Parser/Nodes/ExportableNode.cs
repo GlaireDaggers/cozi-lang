@@ -1,4 +1,4 @@
-namespace Compiler
+namespace Cozi.Compiler
 {
     public abstract class ExportableNode : ASTNode
     {

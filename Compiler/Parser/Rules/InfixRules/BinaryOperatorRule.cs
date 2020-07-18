@@ -1,4 +1,4 @@
-namespace Compiler
+namespace Cozi.Compiler
 {
     public static class OperatorPrecedence
     {
@@ -17,6 +17,7 @@ namespace Compiler
         public const int LogicalAnd = 10;
         public const int LogicalOr = 11;
         public const int Assignment = 12;
+        public const int Range = 13;
     }
 
     public class BinaryOperatorRule : IInfixRule

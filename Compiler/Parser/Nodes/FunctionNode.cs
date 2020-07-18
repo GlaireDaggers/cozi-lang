@@ -1,6 +1,6 @@
 using System.Linq;
 
-namespace Compiler
+namespace Cozi.Compiler
 {
     public class FunctionNode : ExportableNode
     {

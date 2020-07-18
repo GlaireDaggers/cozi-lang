@@ -1,4 +1,6 @@
-namespace Compiler
+using System.IO;
+
+namespace Cozi.IL
 {
     public class StaticArrayTypeInfo : TypeInfo
     {
@@ -10,6 +12,25 @@ namespace Compiler
         {
             ElementType = elementType;
             ArraySize = arraySize;
+        }
+
+        public StaticArrayTypeInfo(string name, TypeKind kind, BinaryReader reader)
+            : base(name, kind, reader)
+        {
+            ElementType = TypeInfo.Deserialize(reader);
+            ArraySize = reader.ReadUInt32();
+        }
+
+        public override void Serialize(BinaryWriter outStream)
+        {
+            base.Serialize(outStream);
+            ElementType.Serialize(outStream);
+            outStream.Write(ArraySize);
+        }
+
+        public override int SizeOf()
+        {
+            return ElementType.SizeOf() * (int)ArraySize;
         }
 
         public override bool Equals(object obj)
